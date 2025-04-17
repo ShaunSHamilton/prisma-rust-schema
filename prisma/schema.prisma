@@ -1,0 +1,37 @@
+generator prisma_rust_schema {
+  provider = "cargo run -- "
+  output   = "../output/types.rs"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("MONGOHQ_URL")
+}
+
+model User {
+  id         String     @id @default(auto()) @map("_id") @db.ObjectId
+  email      String     @unique
+  name       String?
+  permission Permission
+
+  posts Post[]
+}
+
+model Post {
+  id       String  @id @default(auto()) @map("_id") @db.ObjectId
+  title    String
+  content  Content
+  authorId String  @db.ObjectId
+
+  author User @relation(fields: [authorId], references: [id])
+}
+
+enum Permission {
+  USER
+  ADMIN
+}
+
+type Content {
+  text   String
+  images String[]
+}
