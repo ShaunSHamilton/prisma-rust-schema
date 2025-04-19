@@ -1,17 +1,10 @@
 //! # Prisma Rust Schema
 //!
 //! This CLI tool generates Rust types from a Prisma schema file.
-//!
-//!
 
 use std::io::{BufRead, BufReader, Write, stderr, stdin};
 
-mod config;
-mod dmmf;
-mod jsonrpc;
-mod typed_sql;
-
-use config::GeneratorOptions;
+use prisma_rust_schema::{config::GeneratorOptions, jsonrpc};
 
 fn main() {
     loop {
@@ -23,13 +16,15 @@ fn main() {
         let input: jsonrpc::Request = serde_json::from_str(&content)
             .expect("stdin from prisma to be serializable into jsonrpc");
 
+        let version = env!("CARGO_PKG_VERSION").to_string();
+
         let data = match input.method.as_str() {
             "getManifest" => jsonrpc::ResponseData::Result(
                 serde_json::to_value(jsonrpc::ManifestResponse {
                     manifest: jsonrpc::Manifest {
-                        default_output: "../src/typ.rs".to_string(),
+                        default_output: "../src/prisma-rust-schema.rs".to_string(),
                         pretty_name: "Prisma Rust Schema".to_string(),
-                        version: Some("0.1.0".to_string()),
+                        version: Some(version),
                         ..Default::default()
                     },
                 })

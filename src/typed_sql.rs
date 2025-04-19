@@ -2,6 +2,7 @@ use serde::{Deserialize, Serialize};
 use std::borrow::Cow;
 
 #[derive(Debug, Clone, Deserialize, Serialize)]
+#[serde(rename_all = "camelCase")]
 pub struct SqlQueryOutput {
     pub name: String,
     pub source: String,
@@ -13,8 +14,7 @@ pub struct SqlQueryOutput {
 #[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct SqlQueryParameterOutput {
     pub name: String,
-    #[serde(rename = "typ")]
-    pub r#type: QueryIntrospectionType,
+    pub typ: QueryIntrospectionType,
     pub documentation: Option<String>,
     pub nullable: bool,
 }
@@ -22,8 +22,7 @@ pub struct SqlQueryParameterOutput {
 #[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct SqlQueryColumnOutput {
     pub name: String,
-    #[serde(rename = "typ")]
-    pub r#type: QueryIntrospectionType,
+    pub typ: QueryIntrospectionType,
     pub nullable: bool,
 }
 
@@ -35,7 +34,7 @@ pub enum QueryIntrospectionType {
 }
 
 // This must remain in sync with the `quaint::ColumnType` enum in the QueryEngine.
-// ./quaint/src/connector/column_type.rs
+// https://github.com/prisma/prisma-engines/blob/main/quaint/src/connector/column_type.rs#L12
 #[derive(Debug, Clone, Copy, Deserialize, Serialize, PartialEq, Eq, Hash)]
 #[serde(rename_all = "kebab-case")]
 pub enum QueryIntrospectionBuiltinType {
@@ -55,35 +54,20 @@ pub enum QueryIntrospectionBuiltinType {
     Datetime,
     Date,
     Time,
-    #[serde(rename = "int-array")]
     IntArray,
-    #[serde(rename = "bigint-array")]
     BigintArray,
-    #[serde(rename = "float-array")]
     FloatArray,
-    #[serde(rename = "double-array")]
     DoubleArray,
-    #[serde(rename = "string-array")]
     StringArray,
-    #[serde(rename = "char-array")]
     CharArray,
-    #[serde(rename = "bytes-array")]
     BytesArray,
-    #[serde(rename = "bool-array")]
     BoolArray,
-    #[serde(rename = "decimal-array")]
     DecimalArray,
-    #[serde(rename = "json-array")]
     JsonArray,
-    #[serde(rename = "xml-array")]
     XmlArray,
-    #[serde(rename = "uuid-array")]
     UuidArray,
-    #[serde(rename = "datetime-array")]
     DatetimeArray,
-    #[serde(rename = "date-array")]
     DateArray,
-    #[serde(rename = "time-array")]
     TimeArray,
     Null,
     Unknown,

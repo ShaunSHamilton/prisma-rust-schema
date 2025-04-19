@@ -2,6 +2,8 @@
 
 ## Usage
 
+### Binary
+
 1. Install the binary
 
 ```bash
@@ -28,6 +30,10 @@ npx prisma generate
 ```rust
 use prisma::MyModel;
 ```
+
+### Library
+
+This crate exports the internal TypeScript types from [`prisma/prisma`](https://github.com/prisma/prisma/).
 
 ## Constraints
 

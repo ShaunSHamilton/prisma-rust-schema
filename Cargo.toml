@@ -1,12 +1,14 @@
 [package]
 name = "prisma-rust-schema"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2024"
 authors = ["Shaun Hamilton <shauhami020@gmail.com>"]
 description = "A Rust binary to act as a Prisma generator, generating Rust code from Prisma schema files."
 license = "MIT"
 readme = "README.md"
 repository = "https://github.com/ShaunSHamilton/prisma-rust-schema/"
+categories = ["api-bindings", "database", "development-tools::ffi"]
+keywords = ["prisma", "rust", "generator"]
 
 
 [dependencies]
