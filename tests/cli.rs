@@ -1,45 +1,32 @@
+use bson::doc;
+mod schema;
+use schema::*;
+
 #[test]
-fn cli_works() {
-    build_cli();
-    generate();
-}
+fn rename() {
+    let user_json = doc! {
+        "_id": {
+            "$oid": "507f1f77bcf86cd799439011"
+        },
+        "name": "John Doe",
+        "email": "test@test.com",
+        "permission": "USER",
+        "createdAt": 1234567890,
+        "status": {
+            "active": true,
+            "lastLogin": 1234567890,
+        },
+        "badCase": [],
+        "posts": []
+    };
 
-fn build_cli() {
-    let output = std::process::Command::new("cargo")
-        .arg("build")
-        .output()
-        .expect("Failed to run cli");
-
-    println!(
-        "CLI Build Output:\n{}",
-        String::from_utf8_lossy(&output.stdout)
+    let user: User = bson::from_document(user_json).unwrap();
+    assert_eq!(
+        user.id,
+        bson::oid::ObjectId::parse_str("507f1f77bcf86cd799439011").unwrap()
     );
-
-    eprintln!(
-        "CLI Build Error:\n{}",
-        String::from_utf8_lossy(&output.stderr)
-    );
-    assert!(output.status.success());
-}
-
-fn generate() {
-    let current_path = std::env::var("PATH").unwrap_or_default();
-    let new_path = format!("./target/debug:{}", current_path);
-
-    let output = std::process::Command::new("npx")
-        .args(&["prisma", "generate", "--no-engine"])
-        .env("PATH", new_path) // Set the PATH for this command
-        .output()
-        .expect("Failed to run prisma generate");
-
-    println!(
-        "Prisma Generate Output:\n{}",
-        String::from_utf8_lossy(&output.stdout)
-    );
-    eprintln!(
-        "Prisma Generate Error:\n{}",
-        String::from_utf8_lossy(&output.stderr)
-    );
-    assert!(output.status.success());
-    // Add assertions based on the expected output of your generator
+    assert_eq!(user.username, Some("John Doe".to_string()));
+    assert_eq!(user.email, "test@test.com".to_string());
+    assert_eq!(user.permission, Permission::USER);
+    assert_eq!(user.created_at, 1234567890usize);
 }

@@ -42,6 +42,7 @@ pub struct EnumValue {
     pub name: String,
     #[serde(rename = "dbName")]
     pub db_name: Option<String>,
+    pub documentation: Option<String>,
 }
 
 #[derive(Debug, Clone, Deserialize, Serialize)]
@@ -133,6 +134,7 @@ pub struct Field {
     pub field_type: String,
     /// [string | string[]]
     pub native_type: Option<Vec<Value>>,
+    /// Name of the field in the database
     pub db_name: Option<String>,
     pub has_default_value: bool,
     #[serde(rename = "default")]
@@ -388,52 +390,4 @@ pub enum ModelAction {
     Aggregate,
     FindRaw,
     AggregateRaw,
-}
-
-impl From<&Field> for String {
-    fn from(field: &Field) -> Self {
-        // camelCase to snake_case
-        let field_name = field
-            .name
-            .clone()
-            .chars()
-            .fold(String::new(), |mut acc, c| {
-                if c.is_uppercase() {
-                    if !acc.is_empty() {
-                        acc.push('_');
-                    }
-                    acc.push(c.to_ascii_lowercase());
-                } else {
-                    acc.push(c);
-                }
-                acc
-            });
-        let mut field_type = String::new();
-        let t = match field.field_type.as_str() {
-            "String" => "String".to_string(),
-            "Int" => "i32".to_string(),
-            "Float" => "f64".to_string(),
-            "Boolean" => "bool".to_string(),
-            "DateTime" => "chrono::NaiveDateTime".to_string(),
-            _ => field.field_type.clone(),
-        };
-
-        if !field.is_required {
-            field_type.push_str("Option<");
-        }
-        if field.is_list {
-            field_type.push_str("Vec<");
-        }
-
-        field_type.push_str(&t);
-
-        if field.is_list {
-            field_type.push('>');
-        }
-        if !field.is_required {
-            field_type.push('>');
-        }
-
-        format!("{:>4}pub {}: {},\n", "", field_name, field_type)
-    }
 }

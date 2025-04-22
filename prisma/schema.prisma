@@ -1,6 +1,6 @@
 generator prisma_rust_schema {
   provider = "cargo run -- "
-  output   = "../output/types.rs"
+  output   = "../tests/schema.rs"
 }
 
 datasource db {
@@ -8,17 +8,26 @@ datasource db {
   url      = env("MONGOHQ_URL")
 }
 
+/// @prs.derive = Debug,Clone,serde::Serialize,serde::Deserialize
 model User {
   id         String     @id @default(auto()) @map("_id") @db.ObjectId
   email      String     @unique
+  /// @prs.rename = username
   name       String?
   permission Permission
+  /// @prs.type = usize
+  createdAt  DateTime   @default(now())
+  status     Json
+  badCase    badCase[]
 
   posts Post[]
 }
 
+/// @prs.derive = Debug,Clone,serde::Serialize,serde::Deserialize
 model Post {
   id       String  @id @default(auto()) @map("_id") @db.ObjectId
+  /// A skipped field
+  /// @prs.skip
   title    String
   content  Content
   authorId String  @db.ObjectId
@@ -26,12 +35,44 @@ model Post {
   author User @relation(fields: [authorId], references: [id])
 }
 
+/// Permission for `User`
+/// @prs.derive = Debug,Clone,serde::Serialize,serde::Deserialize,PartialEq
 enum Permission {
+  /// A common user
   USER
+  /// All writes user
   ADMIN
 }
 
+/// @prs.derive = Debug,Clone,serde::Serialize,serde::Deserialize
 type Content {
   text   String
   images String[]
+}
+
+/// A model with a bad casing
+/// @prs.derive = Debug,Clone,serde::Serialize,serde::Deserialize
+model badCase {
+  id     String @id @default(auto()) @map("_id") @db.ObjectId
+  userId String @db.ObjectId
+
+  User User @relation(fields: [userId], references: [id])
+}
+
+/// A skipped enum
+/// @prs.skip
+enum SkippedEnum {
+  UNAVAILABLE
+}
+
+/// A skipped type
+/// @prs.skip
+type SkippedType {
+  skipped String
+}
+
+/// A skipped model
+/// @prs.skip
+model SkippedModel {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
 }
