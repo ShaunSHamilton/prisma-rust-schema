@@ -105,10 +105,44 @@ pub struct Post {
 
 ## Constraints
 
+This package is tested to work with `prisma@^6`. It does work with `prisma@^5` but there are no native types such as `@db.ObjectId`. So, `@prs.type` must be used, otherwise the type will be the `.prisma` type.
+
+<table>
+  <thead>
+    <tr>
+      <th>Version</th>
+      <th>Prisma Schema</th>
+      <th>Rust Type</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>5.x</td>
+      <td>
+        <pre><code class="language-prisma">
+model User {
+  id @db.ObjectId
+}</code></pre>
+      </td>
+      <td><pre><code class="language-rust">
+pub struct User {
+    id: String
+}</code></pre></td>
+    </tr>
+    <tr>
+      <td>6.x</td>
+      <td>
+        <pre><code class="language-prisma">
+model User {
+  id @db.ObjectId
+}</code></pre>
+      </td>
+      <td><pre><code class="language-rust">
+pub struct User {
+    id: bson::oid::ObjectId
+}</code></pre></td>
+    </tr>
+  </tbody>
+</table>
+
 Currently, it is up to **the user** to ensure all types have valid derive attributes. Specifically, if the `rename` attribute is needed, then `serde::Deserialize` and `serde::Serialize` must be used. The generator will not add them automatically.
-
-## Development
-
-```bash
-npx prisma generate
-```

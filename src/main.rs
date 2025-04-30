@@ -47,7 +47,6 @@ fn main() {
                     serde_path_to_error::deserialize(deserializer)
                         .map_err(|e| format!("{}\n{}", e, e.path()))
                         .expect("generator options to be deserializable from prisma");
-
                 generate_rust_types(&generator_options);
                 jsonrpc::ResponseData::Result(serde_json::Value::Null)
             }
@@ -82,7 +81,6 @@ fn main() {
 fn generate_rust_types(generator_options: &GeneratorOptions) {
     let datamodel = &generator_options.dmmf.datamodel;
 
-    println!("{:#?}", datamodel);
     let mut output_tokens = quote! {};
 
     for model in datamodel.models.iter() {

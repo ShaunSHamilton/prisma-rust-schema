@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.2.1] - 2025-04-30
+
+### Fixed
+
+- Moved `bson` dependency to `dev-dependencies`
+
 ## [0.2.0] - 2025-04-22
 
 ### Added
