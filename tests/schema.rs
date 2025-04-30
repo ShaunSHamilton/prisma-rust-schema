@@ -1,4 +1,4 @@
-#[derive(Debug, Clone, serde :: Serialize, serde :: Deserialize)]
+#[derive(Debug, Clone, serde :: Serialize, serde :: Deserialize, PartialEq)]
 pub struct User {
     #[serde(rename = "_id")]
     pub id: bson::oid::ObjectId,
@@ -13,7 +13,7 @@ pub struct User {
     pub bad_case: Vec<BadCase>,
     pub posts: Vec<Post>,
 }
-#[derive(Debug, Clone, serde :: Serialize, serde :: Deserialize)]
+#[derive(Debug, Clone, serde :: Serialize, serde :: Deserialize, PartialEq)]
 pub struct Post {
     #[serde(rename = "_id")]
     pub id: bson::oid::ObjectId,
@@ -22,14 +22,14 @@ pub struct Post {
     pub author_id: bson::oid::ObjectId,
 }
 #[doc = "A model with a bad casing"]
-#[derive(Debug, Clone, serde :: Serialize, serde :: Deserialize)]
+#[derive(Debug, Clone, serde :: Serialize, serde :: Deserialize, PartialEq)]
 pub struct BadCase {
     #[serde(rename = "_id")]
     pub id: bson::oid::ObjectId,
     #[serde(rename = "userId")]
     pub user_id: bson::oid::ObjectId,
 }
-#[derive(Debug, Clone, serde :: Serialize, serde :: Deserialize)]
+#[derive(Debug, Clone, serde :: Serialize, serde :: Deserialize, PartialEq)]
 pub struct Content {
     pub text: String,
     pub images: Vec<String>,

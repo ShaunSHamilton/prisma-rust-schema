@@ -8,7 +8,7 @@ datasource db {
   url      = env("MONGOHQ_URL")
 }
 
-/// @prs.derive = Debug,Clone,serde::Serialize,serde::Deserialize
+/// @prs.derive = Debug,Clone,serde::Serialize,serde::Deserialize,PartialEq
 model User {
   id         String     @id @default(auto()) @map("_id") @db.ObjectId
   email      String     @unique
@@ -23,7 +23,7 @@ model User {
   posts Post[]
 }
 
-/// @prs.derive = Debug,Clone,serde::Serialize,serde::Deserialize
+/// @prs.derive = Debug,Clone,serde::Serialize,serde::Deserialize,PartialEq
 model Post {
   id       String  @id @default(auto()) @map("_id") @db.ObjectId
   /// A skipped field
@@ -44,14 +44,14 @@ enum Permission {
   ADMIN
 }
 
-/// @prs.derive = Debug,Clone,serde::Serialize,serde::Deserialize
+/// @prs.derive = Debug,Clone,serde::Serialize,serde::Deserialize,PartialEq
 type Content {
   text   String
   images String[]
 }
 
 /// A model with a bad casing
-/// @prs.derive = Debug,Clone,serde::Serialize,serde::Deserialize
+/// @prs.derive = Debug,Clone,serde::Serialize,serde::Deserialize,PartialEq
 model badCase {
   id     String @id @default(auto()) @map("_id") @db.ObjectId
   userId String @db.ObjectId
