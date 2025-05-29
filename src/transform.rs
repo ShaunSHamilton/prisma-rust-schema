@@ -1,4 +1,4 @@
-use crate::dmmf::Field;
+use psl::schema_ast::ast::{Field, WithName};
 
 #[derive(Debug, Clone, PartialEq)]
 pub(crate) enum Case {
@@ -67,7 +67,7 @@ pub(crate) fn identify_case(input: &str) -> Case {
 // Split by uppercase (keep), underscore (discard), hyphen (discard)
 // Lowercase all characters
 // Join with underscore
-pub fn to_snake_case(input: &str) -> String {
+pub(crate) fn to_snake_case(input: &str) -> String {
     let case = identify_case(input);
 
     match case {
@@ -131,7 +131,7 @@ pub fn to_snake_case(input: &str) -> String {
     }
 }
 
-pub fn to_pascal_case(input: &str) -> String {
+pub(crate) fn to_pascal_case(input: &str) -> String {
     let case = identify_case(input);
 
     match case {
@@ -208,45 +208,41 @@ pub fn to_pascal_case(input: &str) -> String {
     }
 }
 
-pub fn convert_field_to_type(field: &Field) -> String {
-    if let Some(native_type) = &field.native_type {
-        // Assume first part is the type
-        let t = native_type
-            .get(0)
-            .expect("Native type should have at least one part");
-        let t = t
-            .as_str()
-            .expect("Native type should be a stringified version");
-        // TODO: Consider automatically handling list/optional types
-        match t {
-            "ObjectId" => "bson::oid::ObjectId".to_string(),
-            _ => unimplemented!("Unsupported native type: {}", t),
-        }
-    } else {
-        let scalar = match field.field_type.as_str() {
-            "Boolean" => "bool".to_string(),
-            "Int" => "i32".to_string(),
-            "Float" => "f32".to_string(),
-            "String" => "String".to_string(),
-            "Json" => "serde_json::Value".to_string(),
-            "DateTime" => "chrono::DateTime<chrono::Utc>".to_string(),
-            _ => to_pascal_case(&field.field_type),
-        };
-
-        let maybe_list = if field.is_list {
-            format!("Vec<{}>", scalar)
-        } else {
-            scalar
-        };
-
-        let maybe_option = if field.is_required {
-            maybe_list
-        } else {
-            format!("Option<{}>", maybe_list)
-        };
-
-        maybe_option
+pub(crate) fn convert_field_to_type(field: &Field) -> String {
+    let mut field_type_name = field.field_type.name().to_string();
+    // If attribute contains `@db.ObjectId`, convert field_type_name to `ObjectId`
+    if field
+        .attributes
+        .iter()
+        .any(|attr| attr.name() == "db.ObjectId")
+    {
+        field_type_name = "bson::oid::ObjectId".to_string();
     }
+
+    let scalar = match field_type_name.as_str() {
+        "Boolean" => "bool".to_string(),
+        "Int" => "i32".to_string(),
+        "Float" => "f32".to_string(),
+        "String" => "String".to_string(),
+        "Json" => "serde_json::Value".to_string(),
+        "DateTime" => "chrono::DateTime<chrono::Utc>".to_string(),
+        "bson::oid::ObjectId" => "bson::oid::ObjectId".to_string(),
+        _ => to_pascal_case(&field_type_name),
+    };
+
+    let maybe_list = if field.arity.is_list() {
+        format!("Vec<{}>", scalar)
+    } else {
+        scalar
+    };
+
+    let maybe_option = if field.arity.is_optional() {
+        format!("Option<{}>", maybe_list)
+    } else {
+        maybe_list
+    };
+
+    maybe_option
 }
 
 #[cfg(test)]

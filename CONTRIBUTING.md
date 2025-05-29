@@ -15,10 +15,6 @@ Contributions to `prisma-rust-schema` are welcome!
   ```
 - **Set Up Your Environment:**
   - Ensure you have Rust and Cargo installed (`rustc --version`, `cargo --version`).
-- **Manually Experiment with Changes:**
-  ```bash
-  npx prisma generate
-  ```
 - **Run Tests:**
   - Run the tests to ensure everything is working correctly:
   ```bash
