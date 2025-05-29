@@ -1,8 +1,3 @@
-generator prisma_rust_schema {
-  provider = "cargo run -- "
-  output   = "../tests/schema.rs"
-}
-
 datasource db {
   provider = "mongodb"
   url      = env("MONGOHQ_URL")

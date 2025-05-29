@@ -1,23 +1,27 @@
 [package]
 name = "prisma-rust-schema"
-version = "0.2.1"
+version = "0.3.0"
 edition = "2024"
 authors = ["Shaun Hamilton <shauhami020@gmail.com>"]
-description = "A Rust binary to act as a Prisma generator, generating Rust code from Prisma schema files."
+description = "A Rust proc-macro to generate Rust types from Prisma schema files."
 license = "MIT"
 readme = "README.md"
 repository = "https://github.com/ShaunSHamilton/prisma-rust-schema/"
 categories = ["api-bindings", "database", "development-tools::ffi"]
-keywords = ["prisma", "rust", "generator"]
+keywords = ["prisma", "rust"]
 
+[lib]
+proc-macro = true
 
 [dependencies]
 proc-macro2 = "1.0.95"
 quote = "1.0.40"
 serde = { version = "1.0.219", features = ["derive"] }
 serde_json = "1.0.140"
-serde_path_to_error = "0.1.17"
-syn = "2.0.100"
+syn = "2.0.101"
+psl = { git = "https://github.com/prisma/prisma-engines", version = "0.1.0", tag = "6.8.2", features = [
+  "all",
+] }
 
 [dev-dependencies]
-bson = "2.14.0"
+bson = "2.15.0"

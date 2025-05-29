@@ -1,0 +1,30 @@
+name: Rust Test
+
+on:
+  push:
+    branches: ["master"]
+  pull_request:
+    branches: ["master"]
+  workflow_dispatch:
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  test:
+    name: Test Rust ${{ matrix.rust }}
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        rust: ["stable"]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Rust Toolchain
+        uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: ${{ matrix.rust }}
+
+      - name: Run Tests
+        run: cargo test

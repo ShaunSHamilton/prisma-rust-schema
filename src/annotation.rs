@@ -65,6 +65,7 @@ impl Default for Visibility {
     }
 }
 
+// TODO: Find way to not need `proc_macro2::TokenStream` for this. This is the only reason for the `proc_macro2` dependency.
 impl ToTokens for Visibility {
     fn to_tokens(&self, tokens: &mut TokenStream) {
         match self {
@@ -136,6 +137,11 @@ impl From<String> for FieldAnnotation {
 }
 impl From<&String> for FieldAnnotation {
     fn from(s: &String) -> Self {
+        FieldAnnotation::from_str(s).unwrap_or_default()
+    }
+}
+impl From<&str> for FieldAnnotation {
+    fn from(s: &str) -> Self {
         FieldAnnotation::from_str(s).unwrap_or_default()
     }
 }
@@ -213,6 +219,11 @@ impl From<&String> for ModelAnnotation {
         ModelAnnotation::from_str(s).unwrap_or_default()
     }
 }
+impl From<&str> for ModelAnnotation {
+    fn from(s: &str) -> Self {
+        ModelAnnotation::from_str(s).unwrap_or_default()
+    }
+}
 
 impl FromStr for EnumAnnotation {
     type Err = String;
@@ -284,6 +295,11 @@ impl From<String> for EnumAnnotation {
 }
 impl From<&String> for EnumAnnotation {
     fn from(s: &String) -> Self {
+        EnumAnnotation::from_str(s).unwrap_or_default()
+    }
+}
+impl From<&str> for EnumAnnotation {
+    fn from(s: &str) -> Self {
         EnumAnnotation::from_str(s).unwrap_or_default()
     }
 }
@@ -366,6 +382,11 @@ impl From<&String> for TypeAnnotation {
         TypeAnnotation::from_str(s).unwrap_or_default()
     }
 }
+impl From<&str> for TypeAnnotation {
+    fn from(s: &str) -> Self {
+        TypeAnnotation::from_str(s).unwrap_or_default()
+    }
+}
 
 impl FromStr for EnumValueAnnotation {
     type Err = String;
@@ -404,6 +425,11 @@ impl From<String> for EnumValueAnnotation {
 }
 impl From<&String> for EnumValueAnnotation {
     fn from(s: &String) -> Self {
+        EnumValueAnnotation::from_str(s).unwrap_or_default()
+    }
+}
+impl From<&str> for EnumValueAnnotation {
+    fn from(s: &str) -> Self {
         EnumValueAnnotation::from_str(s).unwrap_or_default()
     }
 }

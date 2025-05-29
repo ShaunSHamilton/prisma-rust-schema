@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.3.0] - 2025-05-29
+
+### Changed
+
+- Remove library exports of prisma internal TS types
+- Convert to a proc-macro crate
+
+### Added
+
+- `import_types!` macro to import Prisma schema types
+- License text
+
 ## [0.2.1] - 2025-04-30
 
 ### Fixed
