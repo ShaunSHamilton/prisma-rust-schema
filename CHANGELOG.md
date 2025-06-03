@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.4.0] - 2025-06-03
+
+### Added
+
+- Import options for `import_types!` macro
+- `derive` option
+- `include` option
+- `prefix` option
+
 ## [0.3.0] - 2025-05-29
 
 ### Changed
