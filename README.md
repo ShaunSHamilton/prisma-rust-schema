@@ -17,6 +17,13 @@ use prisma_rust_schema::import_types;
 
 // Relative to `Cargo.toml`
 import_types!("./prisma/schema.prisma");
+// Or, use import options:
+import_types!(
+    schema_path = "./prisma/schema.prisma",
+    derive = [Debug, Clone, serde::Deserialize, serde::Serialize], // Optional, defaults to no derive
+    include = ["User", "Post"], // Optional, defaults to all models
+    prefix = "MyPrefix", // Optional, defaults to no prefix
+);
 ```
 
 ## Options

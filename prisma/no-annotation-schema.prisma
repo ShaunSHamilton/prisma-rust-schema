@@ -1,0 +1,62 @@
+datasource db {
+  provider = "mongodb"
+  url      = env("MONGOHQ_URL")
+}
+
+model User {
+  id         String     @id @default(auto()) @map("_id") @db.ObjectId
+  email      String     @unique
+  name       String?
+  permission Permission
+  createdAt  DateTime   @default(now())
+  status     Json
+  badCase    badCase[]
+
+  posts Post[]
+}
+
+model Post {
+  id       String  @id @default(auto()) @map("_id") @db.ObjectId
+  /// A skipped field
+  title    String
+  content  Content
+  authorId String  @db.ObjectId
+
+  author User @relation(fields: [authorId], references: [id])
+}
+
+/// Permission for `User`
+enum Permission {
+  /// A common user
+  USER
+  /// All writes user
+  ADMIN
+}
+
+type Content {
+  text   String
+  images String[]
+}
+
+/// A model with a bad casing
+model badCase {
+  id     String @id @default(auto()) @map("_id") @db.ObjectId
+  userId String @db.ObjectId
+
+  User User @relation(fields: [userId], references: [id])
+}
+
+/// A skipped enum
+enum SkippedEnum {
+  UNAVAILABLE
+}
+
+/// A skipped type
+type SkippedType {
+  skipped String
+}
+
+/// A skipped model
+model SkippedModel {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+}

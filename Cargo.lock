@@ -670,14 +670,16 @@ dependencies = [
 
 [[package]]
 name = "prisma-rust-schema"
-version = "0.3.0"
+version = "0.4.0"
 dependencies = [
  "bson",
+ "chrono",
  "proc-macro2",
  "psl",
  "quote",
  "serde",
  "serde_json",
+ "serde_tokenstream",
  "syn",
 ]
 
@@ -896,6 +898,18 @@ checksum = "175ee3e80ae9982737ca543e96133087cbd9a485eecc3bc4de9c1a37b47ea59c"
 dependencies = [
  "proc-macro2",
  "quote",
+ "syn",
+]
+
+[[package]]
+name = "serde_tokenstream"
+version = "0.2.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "64060d864397305347a78851c51588fd283767e7e7589829e8121d65512340f1"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "serde",
  "syn",
 ]
 
