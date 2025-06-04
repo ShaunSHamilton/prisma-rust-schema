@@ -18,8 +18,6 @@ fn user_model() {
             "active": true,
             "lastLogin": 1234567890,
         },
-        "badCase": [],
-        "posts": []
     });
 
     let user: AUser = serde_json::from_value(user_json).unwrap();
@@ -42,8 +40,6 @@ fn user_model() {
         user.status,
         json!({"active": true, "lastLogin": 1234567890})
     );
-    assert_eq!(user.bad_case, vec![]);
-    assert_eq!(user.posts, vec![]);
 }
 
 #[test]
@@ -63,6 +59,9 @@ fn post_model() {
             "$oid": "507f1f77bcf86cd799439012"
         },
         "title": "Sample Post",
+        "badCaseId": {
+            "$oid": "507f1f77bcf86cd799439013"
+        }
     });
 
     let post: APost = serde_json::from_value(post_json).unwrap();
@@ -83,6 +82,10 @@ fn post_model() {
         ObjectId::parse_str("507f1f77bcf86cd799439012").unwrap()
     );
     assert_eq!(post.title, "Sample Post".to_string());
+    assert_eq!(
+        post.bad_case_id,
+        ObjectId::parse_str("507f1f77bcf86cd799439013").unwrap()
+    );
 }
 
 #[test]
@@ -96,7 +99,8 @@ fn bad_case_model() {
         }
     });
 
-    let bad_case: ABadCase = serde_json::from_value(bad_case_json).unwrap();
+    let bad_case: ABadCase = serde_json::from_value(bad_case_json)
+        .expect("deserialization failed. ensure `posts` field is IGNORED");
     assert_eq!(
         bad_case.id,
         ObjectId::parse_str("507f1f77bcf86cd799439011").unwrap()

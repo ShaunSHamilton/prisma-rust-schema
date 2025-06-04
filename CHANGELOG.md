@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.5.0] - 2025-06-04
+
+### Changed
+
+- Ignore relation fields including model references within models
+
 ## [0.4.0] - 2025-06-03
 
 ### Added

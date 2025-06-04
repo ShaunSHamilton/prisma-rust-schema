@@ -17,8 +17,6 @@ fn user_model() {
             "active": true,
             "lastLogin": 1234567890,
         },
-        "badCase": [],
-        "posts": []
     });
 
     let user: User = serde_json::from_value(user_json).unwrap();
@@ -38,8 +36,6 @@ fn user_model() {
         user.status,
         json!({"active": true, "lastLogin": 1234567890})
     );
-    assert_eq!(user.bad_case, vec![]);
-    assert_eq!(user.posts, vec![]);
 }
 
 #[test]

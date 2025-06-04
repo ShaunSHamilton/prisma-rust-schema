@@ -1,13 +1,13 @@
 use crate::annotation::FieldAnnotation;
 use crate::transform::{convert_field_to_type, to_snake_case};
-use psl::schema_ast::ast::FieldId;
+use psl::schema_ast::ast::Top;
 use psl::schema_ast::ast::{Field, WithDocumentation, WithName};
 use quote::{ToTokens, format_ident, quote};
 use syn::{Ident, Type, parse_str};
 
-pub fn handle_fields((_field_id, field): (FieldId, &Field)) -> Option<proc_macro2::TokenStream> {
+pub fn handle_fields(schema: &Vec<Top>, field: &Field) -> Option<proc_macro2::TokenStream> {
     // If field is a relation, skip
-    if is_relation(&field) {
+    if is_relation(schema, &field) {
         return None;
     }
 
@@ -123,6 +123,18 @@ pub fn handle_derive(derive: Option<Vec<String>>) -> impl ToTokens {
     }
 }
 
-pub fn is_relation(field: &Field) -> bool {
+/// If a field is a model or an explicit relation.
+pub fn is_relation(schema: &Vec<Top>, field: &Field) -> bool {
+    for top in schema {
+        match top {
+            Top::Model(model) => {
+                if model.name() == field.field_type.name() {
+                    return true;
+                }
+            }
+            _ => {}
+        };
+    }
+
     field.attributes.iter().any(|a| a.name() == "relation")
 }
