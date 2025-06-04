@@ -10,19 +10,20 @@ model User {
   permission Permission
   createdAt  DateTime   @default(now())
   status     Json
-  badCase    badCase[]
 
-  posts Post[]
+  badCase badCase[]
+  posts   Post[]
 }
 
 model Post {
-  id       String  @id @default(auto()) @map("_id") @db.ObjectId
-  /// A skipped field
-  title    String
-  content  Content
-  authorId String  @db.ObjectId
+  id        String  @id @default(auto()) @map("_id") @db.ObjectId
+  title     String
+  content   Content
+  authorId  String  @db.ObjectId
+  badCaseId String  @db.ObjectId
 
-  author User @relation(fields: [authorId], references: [id])
+  author  User    @relation(fields: [authorId], references: [id])
+  badCase badCase @relation(fields: [badCaseId], references: [id])
 }
 
 /// Permission for `User`
@@ -43,7 +44,8 @@ model badCase {
   id     String @id @default(auto()) @map("_id") @db.ObjectId
   userId String @db.ObjectId
 
-  User User @relation(fields: [userId], references: [id])
+  User  User   @relation(fields: [userId], references: [id])
+  posts Post[]
 }
 
 /// A skipped enum

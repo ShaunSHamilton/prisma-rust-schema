@@ -83,7 +83,7 @@ fn handle_import(item: proc_macro::TokenStream) -> syn::Result<proc_macro::Token
     // let mut output_token_stream = TokenStream::new();
     let mut output_tokens = quote! {};
 
-    for top in tops {
+    for top in &tops {
         match top {
             Top::CompositeType(composite_type) => {
                 let name = composite_type.name();
@@ -135,7 +135,9 @@ fn handle_import(item: proc_macro::TokenStream) -> syn::Result<proc_macro::Token
                 let struct_name = format_ident!("{}", name);
 
                 let documentation = extract_docs(composite_type.documentation().clone());
-                let fields = composite_type.iter_fields().filter_map(handle_fields);
+                let fields = composite_type
+                    .iter_fields()
+                    .filter_map(|(_field_id, field)| handle_fields(&tops, field));
 
                 let derive = handle_derive(derive);
 
@@ -274,7 +276,9 @@ fn handle_import(item: proc_macro::TokenStream) -> syn::Result<proc_macro::Token
                 };
                 let struct_name = format_ident!("{}", name);
                 let documentation = extract_docs(model.documentation().clone());
-                let fields = model.iter_fields().filter_map(handle_fields);
+                let fields = model
+                    .iter_fields()
+                    .filter_map(|(_field_id, field)| handle_fields(&tops, field));
 
                 let derive = handle_derive(derive);
 
