@@ -1,6 +1,6 @@
 [package]
 name = "prisma-rust-schema"
-version = "0.5.0"
+version = "0.6.0"
 edition = "2024"
 authors = ["Shaun Hamilton <shauhami020@gmail.com>"]
 description = "A Rust proc-macro to generate Rust types from Prisma schema files."

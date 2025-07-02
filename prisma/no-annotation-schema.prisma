@@ -10,6 +10,8 @@ model User {
   permission Permission
   createdAt  DateTime   @default(now())
   status     Json
+  my_int     Int
+  my_float   Float
 
   badCase badCase[]
   posts   Post[]

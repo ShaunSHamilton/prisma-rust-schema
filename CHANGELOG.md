@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.6.0] - 2025-07-02
+
+### Changed
+
+- `Int` converts to `i64` instead of `i32`
+- `Float` converts to `f64` instead of `f32`
+
 ## [0.5.0] - 2025-06-04
 
 ### Changed

@@ -18,6 +18,8 @@ fn user_model() {
             "active": true,
             "lastLogin": 1234567890,
         },
+        "my_int": 123_456,
+        "my_float": 0.123456
     });
 
     let user: AUser = serde_json::from_value(user_json).unwrap();
@@ -40,6 +42,8 @@ fn user_model() {
         user.status,
         json!({"active": true, "lastLogin": 1234567890})
     );
+    assert_eq!(user.my_int, 123_456i64);
+    assert_eq!(user.my_float, 0.123456f64);
 }
 
 #[test]

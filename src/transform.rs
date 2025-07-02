@@ -221,8 +221,8 @@ pub(crate) fn convert_field_to_type(field: &Field) -> String {
 
     let scalar = match field_type_name.as_str() {
         "Boolean" => "bool".to_string(),
-        "Int" => "i32".to_string(),
-        "Float" => "f32".to_string(),
+        "Int" => "i64".to_string(),
+        "Float" => "f64".to_string(),
         "String" => "String".to_string(),
         "Json" => "serde_json::Value".to_string(),
         "DateTime" => "chrono::DateTime<chrono::Utc>".to_string(),
