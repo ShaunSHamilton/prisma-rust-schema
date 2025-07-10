@@ -2,7 +2,8 @@
 
 ## Usage
 
-NOTE: Currently, this package is not being updated on the crates.io registry, because this crate depends on a crate on GitHub.
+> [!NOTE]
+> Currently, this package is not being updated on the crates.io registry, because this crate depends on a crate on GitHub.
 
 1. Install the library
 
@@ -23,6 +24,11 @@ import_types!(
     derive = [Debug, Clone, serde::Deserialize, serde::Serialize], // Optional, defaults to no derive
     include = ["User", "Post"], // Optional, defaults to all models
     prefix = "MyPrefix", // Optional, defaults to no prefix
+    patch = [
+      struct MyPrefixUser {
+        existing_field: MyPrefixPost
+      }
+    ]
 );
 ```
 
@@ -46,7 +52,6 @@ model User {
   /// User ID
   /// @prs.rename = `user_id`
   /// @prs.type = `usize`
-  /// @prs.derive = `Debug,Clone,serde::Deserialize`
   id Int @id @default(autoincrement())
   /// User name
   /// @prs.skip

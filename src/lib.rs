@@ -11,7 +11,7 @@ use psl::{
 use quote::{ToTokens, format_ident, quote};
 use serde::Deserialize;
 use serde_tokenstream::{ParseWrapper, from_tokenstream};
-use syn::LitStr;
+use syn::{ItemStruct, LitStr};
 use transform::to_pascal_case;
 
 mod annotation;
@@ -32,28 +32,34 @@ struct ImportOptions {
     derive: Option<Vec<ParseWrapper<syn::Path>>>,
     include: Option<Vec<String>>,
     prefix: Option<String>,
+    patch: Option<Vec<ParseWrapper<ItemStruct>>>,
 }
 
 fn handle_import(item: proc_macro::TokenStream) -> syn::Result<proc_macro::TokenStream> {
     // Parse the input as a string literal `import_types("path.prisma")` or `import_types({ derive: [Path], include: [String]`
     let import_options: ImportOptions =
         from_tokenstream(&proc_macro2::TokenStream::from(item.clone())).unwrap_or_else(|_e| {
-            let schema_path = syn::parse::<LitStr>(item).unwrap().value();
+            let schema_path = syn::parse::<LitStr>(item)
+                .expect("schema path to be provided")
+                .value();
             ImportOptions {
                 schema_path,
                 // TODO: Consider defaulting to SERDE
                 derive: None,
                 include: None,
                 prefix: None,
+                patch: None,
             }
         });
 
     let dir = std::env::var("CARGO_MANIFEST_DIR").map_or_else(
-        |_| std::env::current_dir().unwrap(),
+        |_| std::env::current_dir().expect("current dir to be determined"),
         |s| std::path::Path::new(&s).to_path_buf(),
     );
 
-    let schema_path = import_options.schema_path;
+    // println!("{:#?}", import_options.patch);
+
+    let schema_path = import_options.schema_path.clone();
 
     let path = dir.join(&schema_path);
     if !path.exists() {
@@ -88,7 +94,7 @@ fn handle_import(item: proc_macro::TokenStream) -> syn::Result<proc_macro::Token
             Top::CompositeType(composite_type) => {
                 let name = composite_type.name();
                 if import_options.include.is_some() {
-                    let include = import_options.include.as_ref().unwrap();
+                    let include = import_options.include.as_ref().expect("UNREACHABLE");
                     if !include.contains(&name.to_string()) {
                         continue;
                     }
@@ -137,7 +143,7 @@ fn handle_import(item: proc_macro::TokenStream) -> syn::Result<proc_macro::Token
                 let documentation = extract_docs(composite_type.documentation().clone());
                 let fields = composite_type
                     .iter_fields()
-                    .filter_map(|(_field_id, field)| handle_fields(&tops, field));
+                    .filter_map(|(_field_id, field)| handle_fields(&tops, &import_options, field));
 
                 let derive = handle_derive(derive);
 
@@ -149,12 +155,46 @@ fn handle_import(item: proc_macro::TokenStream) -> syn::Result<proc_macro::Token
                     }
                 };
 
+                let s = if let Some(Some(patch)) = import_options
+                    .patch
+                    .as_ref()
+                    .map(|patches| patches.iter().find(|p| p.ident == struct_name))
+                {
+                    // Keep non-skipped fields, overwrite explicitly mentioned fields
+                    let item_struct = syn::parse2::<syn::ItemStruct>(s).expect("item struct");
+                    let patch_fields = &patch.fields;
+
+                    let fields = item_struct.fields.iter().map(|field| {
+                        if let Some(f) = patch_fields.iter().find(|f| f.ident == field.ident) {
+                            let f = quote! {
+                                #f,
+                            };
+                            f
+                        } else {
+                            let f = quote! {
+                                #field,
+                            };
+                            f
+                        }
+                    });
+
+                    quote! {
+                        #documentation
+                        #derive
+                        #visibility struct #struct_name {
+                            #(#fields)*
+                        }
+                    }
+                } else {
+                    s
+                };
+
                 output_tokens.extend(s);
             }
             Top::Enum(enum_type) => {
                 let name = enum_type.name();
                 if import_options.include.is_some() {
-                    let include = import_options.include.as_ref().unwrap();
+                    let include = import_options.include.as_ref().expect("UNREACHABLE");
                     if !include.contains(&name.to_string()) {
                         continue;
                     }
@@ -240,7 +280,7 @@ fn handle_import(item: proc_macro::TokenStream) -> syn::Result<proc_macro::Token
             Top::Model(model) => {
                 let name = model.name();
                 if import_options.include.is_some() {
-                    let include = import_options.include.as_ref().unwrap();
+                    let include = import_options.include.as_ref().expect("UNREACHABLE");
                     if !include.contains(&name.to_string()) {
                         continue;
                     }
@@ -278,8 +318,7 @@ fn handle_import(item: proc_macro::TokenStream) -> syn::Result<proc_macro::Token
                 let documentation = extract_docs(model.documentation().clone());
                 let fields = model
                     .iter_fields()
-                    .filter_map(|(_field_id, field)| handle_fields(&tops, field));
-
+                    .filter_map(|(_field_id, field)| handle_fields(&tops, &import_options, field));
                 let derive = handle_derive(derive);
 
                 let s = quote! {
@@ -289,6 +328,41 @@ fn handle_import(item: proc_macro::TokenStream) -> syn::Result<proc_macro::Token
                         #(#fields)*
                     }
                 };
+
+                let s = if let Some(Some(patch)) = import_options
+                    .patch
+                    .as_ref()
+                    .map(|patches| patches.iter().find(|p| p.ident == struct_name))
+                {
+                    // Keep non-skipped fields, overwrite explicitly mentioned fields
+                    let item_struct = syn::parse2::<syn::ItemStruct>(s).expect("item struct");
+                    let patch_fields = &patch.fields;
+
+                    let fields = item_struct.fields.iter().map(|field| {
+                        if let Some(f) = patch_fields.iter().find(|f| f.ident == field.ident) {
+                            let f = quote! {
+                                #f,
+                            };
+                            f
+                        } else {
+                            let f = quote! {
+                                #field,
+                            };
+                            f
+                        }
+                    });
+
+                    quote! {
+                        #documentation
+                        #derive
+                        #visibility struct #struct_name {
+                            #(#fields)*
+                        }
+                    }
+                } else {
+                    s
+                };
+
                 output_tokens.extend(s);
             }
             _ => {

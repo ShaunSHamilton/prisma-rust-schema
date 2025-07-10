@@ -1,5 +1,7 @@
 use psl::schema_ast::ast::{Field, WithName};
 
+use crate::ImportOptions;
+
 #[derive(Debug, Clone, PartialEq)]
 pub(crate) enum Case {
     Snake,
@@ -208,8 +210,9 @@ pub(crate) fn to_pascal_case(input: &str) -> String {
     }
 }
 
-pub(crate) fn convert_field_to_type(field: &Field) -> String {
+pub(crate) fn convert_field_to_type(field: &Field, import_options: &ImportOptions) -> String {
     let mut field_type_name = field.field_type.name().to_string();
+
     // If attribute contains `@db.ObjectId`, convert field_type_name to `ObjectId`
     if field
         .attributes
@@ -227,7 +230,14 @@ pub(crate) fn convert_field_to_type(field: &Field) -> String {
         "Json" => "serde_json::Value".to_string(),
         "DateTime" => "chrono::DateTime<chrono::Utc>".to_string(),
         "bson::oid::ObjectId" => "bson::oid::ObjectId".to_string(),
-        _ => to_pascal_case(&field_type_name),
+        _ => {
+            let field_type_name = if let Some(prefix) = &import_options.prefix {
+                format!("{}{}", prefix, field_type_name)
+            } else {
+                field_type_name.to_string()
+            };
+            to_pascal_case(&field_type_name)
+        }
     };
 
     let maybe_list = if field.arity.is_list() {

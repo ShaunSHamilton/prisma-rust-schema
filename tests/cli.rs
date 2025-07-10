@@ -40,6 +40,7 @@ fn user_model() {
     );
     assert_eq!(user.my_int, 123_456i64);
     assert_eq!(user.my_float, 0.123456f64);
+    assert_eq!(user.defaulted, String::default());
 }
 
 #[test]

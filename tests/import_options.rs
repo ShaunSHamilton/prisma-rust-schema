@@ -33,7 +33,7 @@ fn user_model() {
         Some("John Doe".to_string()),
         "name is renamed to username"
     );
-    assert_eq!(user.permission, Permission::USER);
+    assert_eq!(user.permission, APermission::USER);
     assert_eq!(
         user.created_at,
         DateTime::from_timestamp_millis(1234567890).unwrap()

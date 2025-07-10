@@ -106,16 +106,20 @@ impl FromStr for FieldAnnotation {
                             "protected" => Visibility::Protected,
                             "public" => Visibility::Public,
                             _ => {
-                                return Err(format!(
+                                let f = format!(
                                     "Unknown visibility: {}
 Available options: private, protected (pub(crate)), public (pub)",
                                     val
-                                ));
+                                );
+                                eprintln!("{f}");
+                                return Err(f);
                             }
                         };
                     }
                     _ => {
-                        return Err(format!("Unknown field annotation: {}", func));
+                        let f = format!("Unknown field annotation: {}", func);
+                        eprintln!("{f}");
+                        return Err(f);
                     }
                 }
             }
@@ -173,18 +177,22 @@ impl FromStr for ModelAnnotation {
                             "protected" => Visibility::Protected,
                             "public" => Visibility::Public,
                             _ => {
-                                return Err(format!(
+                                let f = format!(
                                     "Unknown visibility: {}
 Available options: private, protected (pub(crate)), public (pub)",
                                     val
-                                ));
+                                );
+                                eprintln!("{f}");
+                                return Err(f);
                             }
                         };
                     }
                     "derive" => {
                         let derive_str = val.trim();
                         if derive_str.is_empty() {
-                            return Err("Derive cannot be empty".to_string());
+                            let f = format!("Derive for {func} cannot be empty");
+                            eprintln!("{f}");
+                            return Err(f);
                         }
                         derive = Some(
                             derive_str
@@ -194,7 +202,9 @@ Available options: private, protected (pub(crate)), public (pub)",
                         );
                     }
                     _ => {
-                        return Err(format!("Unknown field annotation: {}", func));
+                        let f = format!("Unknown field annotation: {}", func);
+                        eprintln!("{f}");
+                        return Err(f);
                     }
                 }
             }
@@ -252,18 +262,22 @@ impl FromStr for EnumAnnotation {
                             "protected" => Visibility::Protected,
                             "public" => Visibility::Public,
                             _ => {
-                                return Err(format!(
+                                let f = format!(
                                     "Unknown visibility: {}
 Available options: private, protected (pub(crate)), public (pub)",
                                     val
-                                ));
+                                );
+                                eprintln!("{f}");
+                                return Err(f);
                             }
                         };
                     }
                     "derive" => {
                         let derive_str = val.trim();
                         if derive_str.is_empty() {
-                            return Err("Derive cannot be empty".to_string());
+                            let f = format!("Derive for {func} cannot be empty");
+                            eprintln!("{f}");
+                            return Err(f);
                         }
                         derive = Some(
                             derive_str
@@ -272,8 +286,11 @@ Available options: private, protected (pub(crate)), public (pub)",
                                 .collect(),
                         );
                     }
+
                     _ => {
-                        return Err(format!("Unknown field annotation: {}", func));
+                        let f = format!("Unknown field annotation: {}", func);
+                        eprintln!("{f}");
+                        return Err(f);
                     }
                 }
             }
@@ -335,11 +352,13 @@ impl FromStr for TypeAnnotation {
                             "protected" => Visibility::Protected,
                             "public" => Visibility::Public,
                             _ => {
-                                return Err(format!(
+                                let f = format!(
                                     "Unknown visibility: {}
 Available options: private, protected (pub(crate)), public (pub)",
                                     val
-                                ));
+                                );
+                                eprintln!("{f}");
+                                return Err(f);
                             }
                         };
                     }
@@ -356,7 +375,9 @@ Available options: private, protected (pub(crate)), public (pub)",
                         );
                     }
                     _ => {
-                        return Err(format!("Unknown field annotation: {}", func));
+                        let f = format!("Unknown field annotation: {}", func);
+                        eprintln!("{f}");
+                        return Err(f);
                     }
                 }
             }
@@ -408,7 +429,9 @@ impl FromStr for EnumValueAnnotation {
                         rename = Some(val.trim().to_string());
                     }
                     _ => {
-                        return Err(format!("Unknown field annotation: {}", func));
+                        let f = format!("Unknown field annotation: {}", func);
+                        eprintln!("{f}");
+                        return Err(f);
                     }
                 }
             }

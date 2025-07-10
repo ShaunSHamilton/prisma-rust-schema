@@ -1,0 +1,14 @@
+datasource db {
+  provider = "mongodb"
+  url      = env("MONGOHQ_URL")
+}
+
+model Test {
+  id        String @id @default(auto()) @map("_id") @db.ObjectId
+  defaulted String
+  dep       Dep
+}
+
+type Dep {
+  d String
+}

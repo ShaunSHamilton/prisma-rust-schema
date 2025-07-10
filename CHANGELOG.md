@@ -1,5 +1,31 @@
 # Changelog
 
+## [0.7.0] - 2025-07-10
+
+### Added
+
+- `patch` feature
+
+```rust
+import_types!(
+  schema_path = "./prisma/schema.prisma",
+  patch = [
+    struct MyStruct {
+      #[serde(default)]
+      pub patched_field: String
+    },
+    struct AnotherStruct {
+      #[serde(rename = "patch")]
+      pub patched_field: String
+    }
+  ]
+)
+```
+
+### Fixed
+
+- `prefix` now correctly prefixes type values for composite types
+
 ## [0.6.0] - 2025-07-02
 
 ### Changed

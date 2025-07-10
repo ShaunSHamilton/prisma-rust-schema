@@ -5,7 +5,6 @@ datasource db {
 
 /// @prs.derive = Debug,Clone,serde::Serialize,serde::Deserialize,PartialEq
 model User {
-  /// @prs.serde = deserialize = "_id", serialize = "id"
   id         String     @id @default(auto()) @map("_id") @db.ObjectId
   email      String     @unique
   /// @prs.rename = username
@@ -17,6 +16,7 @@ model User {
   badCase    badCase[]
   my_int     Int
   my_float   Float
+  defaulted  String
 
   posts Post[]
 }

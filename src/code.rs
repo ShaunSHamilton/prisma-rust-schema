@@ -1,3 +1,4 @@
+use crate::ImportOptions;
 use crate::annotation::FieldAnnotation;
 use crate::transform::{convert_field_to_type, to_snake_case};
 use psl::schema_ast::ast::Top;
@@ -5,7 +6,11 @@ use psl::schema_ast::ast::{Field, WithDocumentation, WithName};
 use quote::{ToTokens, format_ident, quote};
 use syn::{Ident, Type, parse_str};
 
-pub fn handle_fields(schema: &Vec<Top>, field: &Field) -> Option<proc_macro2::TokenStream> {
+pub fn handle_fields(
+    schema: &Vec<Top>,
+    import_options: &ImportOptions,
+    field: &Field,
+) -> Option<proc_macro2::TokenStream> {
     // If field is a relation, skip
     if is_relation(schema, &field) {
         return None;
@@ -33,7 +38,10 @@ pub fn handle_fields(schema: &Vec<Top>, field: &Field) -> Option<proc_macro2::To
 
     let serde_rename = if let Some(db_name) = &field.attributes.iter().find_map(|a| {
         if a.name() == "map" {
-            let (val, _) = a.arguments.arguments[0].value.as_string_value().unwrap();
+            let (val, _) = a.arguments.arguments[0]
+                .value
+                .as_string_value()
+                .expect("map attribute to take string value");
             Some(val)
         } else {
             None
@@ -67,7 +75,7 @@ pub fn handle_fields(schema: &Vec<Top>, field: &Field) -> Option<proc_macro2::To
         }
         None => {
             // Handle type conversions like `Int` to `i32`, and `field.native_type: ObjectId` to `bson::oid::ObjectId`
-            let converted_type = convert_field_to_type(field);
+            let converted_type = convert_field_to_type(field, &import_options);
             let t: Type = parse_str(&converted_type).expect("type to be parseable");
 
             quote! { #t }
