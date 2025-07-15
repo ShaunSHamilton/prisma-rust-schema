@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.0.0] - 2025-07-15
+
+### Added
+
+- `schema_path` now accepts anything implementing [`IntoUrl`](https://docs.rs/reqwest/latest/reqwest/trait.IntoUrl.html)
+
 ## [0.7.0] - 2025-07-10
 
 ### Added

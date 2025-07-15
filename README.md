@@ -30,6 +30,8 @@ import_types!(
       }
     ]
 );
+// If `schema_path` implements `IntoUrl`, it is fetched.
+import_types!("https://raw.githubusercontent.com/ShaunSHamilton/prisma-rust-schema/refs/heads/master/prisma/schema.prisma");
 ```
 
 ## Options

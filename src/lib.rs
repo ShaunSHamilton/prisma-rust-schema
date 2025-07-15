@@ -61,16 +61,30 @@ fn handle_import(item: proc_macro::TokenStream) -> syn::Result<proc_macro::Token
 
     let schema_path = import_options.schema_path.clone();
 
-    let path = dir.join(&schema_path);
-    if !path.exists() {
-        return Err(syn::Error::new_spanned(
-            &schema_path,
-            format!("Schema file not found: {}", path.display()),
-        ));
-    }
+    let schema = match reqwest::blocking::get(&schema_path) {
+        Ok(req) => req.text().map_err(|e| {
+            syn::Error::new_spanned(
+                &schema_path,
+                format!(
+                    "Unable to extract text from provided url: {}",
+                    e.to_string()
+                ),
+            )
+        })?,
+        Err(_e) => {
+            let path = dir.join(&schema_path);
+            if !path.exists() {
+                return Err(syn::Error::new_spanned(
+                    &schema_path,
+                    format!("Schema file not found: {}", path.display()),
+                ));
+            }
 
-    let schema = std::fs::read_to_string(&path)
-        .map_err(|e| syn::Error::new_spanned(&schema_path, e.to_string()))?;
+            let schema = std::fs::read_to_string(&path)
+                .map_err(|e| syn::Error::new_spanned(&schema_path, e.to_string()))?;
+            schema
+        }
+    };
 
     let validated_schema =
         parse_schema(&schema).map_err(|e| syn::Error::new_spanned(&schema_path, e.to_string()))?;

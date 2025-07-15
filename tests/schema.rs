@@ -16,3 +16,8 @@ import_types!(
     prefix = "A",
     derive = [Deserialize, Serialize, Debug, PartialEq],
 );
+
+import_types!(
+    schema_path = "https://raw.githubusercontent.com/ShaunSHamilton/prisma-rust-schema/refs/heads/master/prisma/schema.prisma",
+    prefix = "U"
+);
