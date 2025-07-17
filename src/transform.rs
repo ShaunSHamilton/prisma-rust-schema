@@ -1,4 +1,5 @@
 use psl::schema_ast::ast::{Field, WithName};
+use quote::format_ident;
 
 use crate::ImportOptions;
 
@@ -253,6 +254,49 @@ pub(crate) fn convert_field_to_type(field: &Field, import_options: &ImportOption
     };
 
     maybe_option
+}
+
+pub(crate) fn get_struct_name(name: String, import_options: &ImportOptions) -> proc_macro2::Ident {
+    let name = to_pascal_case(&name);
+    let name = if let Some(prefix) = &import_options.prefix {
+        format!("{}{}", prefix, name)
+    } else {
+        name.to_string()
+    };
+
+    // Handle special cases:
+    let name = match name.as_str() {
+        "type" => "_type".to_string(),
+        _ => name,
+    };
+
+    format_ident!("{}", name)
+}
+
+pub(crate) fn get_field_name(name: String) -> proc_macro2::Ident {
+    let name = to_snake_case(&name);
+    // Handle special cases:
+    let name = match name.as_str() {
+        "type" => "_type".to_string(),
+        _ => name,
+    };
+    format_ident!("{}", name)
+}
+
+pub(crate) fn get_enum_name(name: String, import_options: &ImportOptions) -> proc_macro2::Ident {
+    let name = to_pascal_case(&name);
+    let name = if let Some(prefix) = &import_options.prefix {
+        format!("{}{}", prefix, name)
+    } else {
+        name.to_string()
+    };
+
+    // Handle special cases:
+    let name = match name.as_str() {
+        "type" => "_type".to_string(),
+        _ => name,
+    };
+    format_ident!("{}", name)
 }
 
 #[cfg(test)]

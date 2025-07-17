@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.0.1] - 2025-07-17
+
+### Fixed
+
+- `type` keyword names is auto-transformed to `_type`
+
 ## [1.0.0] - 2025-07-15
 
 ### Added

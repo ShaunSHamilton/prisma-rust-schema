@@ -12,7 +12,8 @@ use quote::{ToTokens, format_ident, quote};
 use serde::Deserialize;
 use serde_tokenstream::{ParseWrapper, from_tokenstream};
 use syn::{ItemStruct, LitStr};
-use transform::to_pascal_case;
+
+use crate::transform::{get_enum_name, get_struct_name};
 
 mod annotation;
 mod code;
@@ -106,10 +107,10 @@ fn handle_import(item: proc_macro::TokenStream) -> syn::Result<proc_macro::Token
     for top in &tops {
         match top {
             Top::CompositeType(composite_type) => {
-                let name = composite_type.name();
+                let name = composite_type.name().to_string();
                 if import_options.include.is_some() {
                     let include = import_options.include.as_ref().expect("UNREACHABLE");
-                    if !include.contains(&name.to_string()) {
+                    if !include.contains(&name) {
                         continue;
                     }
                 }
@@ -143,16 +144,7 @@ fn handle_import(item: proc_macro::TokenStream) -> syn::Result<proc_macro::Token
                     continue;
                 }
 
-                let name = match rename {
-                    Some(name) => name,
-                    None => to_pascal_case(name),
-                };
-                let name = if let Some(prefix) = &import_options.prefix {
-                    format!("{}{}", prefix, name)
-                } else {
-                    name.to_string()
-                };
-                let struct_name = format_ident!("{}", name);
+                let struct_name = get_struct_name(rename.unwrap_or(name), &import_options);
 
                 let documentation = extract_docs(composite_type.documentation().clone());
                 let fields = composite_type
@@ -206,10 +198,10 @@ fn handle_import(item: proc_macro::TokenStream) -> syn::Result<proc_macro::Token
                 output_tokens.extend(s);
             }
             Top::Enum(enum_type) => {
-                let name = enum_type.name();
+                let name = enum_type.name().to_string();
                 if import_options.include.is_some() {
                     let include = import_options.include.as_ref().expect("UNREACHABLE");
-                    if !include.contains(&name.to_string()) {
+                    if !include.contains(&name) {
                         continue;
                     }
                 }
@@ -233,16 +225,7 @@ fn handle_import(item: proc_macro::TokenStream) -> syn::Result<proc_macro::Token
                         .collect()
                 }));
 
-                let name = match rename {
-                    Some(name) => name,
-                    None => name.to_string(),
-                };
-                let name = if let Some(prefix) = &import_options.prefix {
-                    format!("{}{}", prefix, name)
-                } else {
-                    name.to_string()
-                };
-                let enum_name = format_ident!("{}", name);
+                let enum_name = get_enum_name(rename.unwrap_or(name), &import_options);
 
                 let documentation = extract_docs(enum_type.documentation().clone());
                 let enum_values = enum_type.values.iter().filter_map(|enum_value| {
@@ -292,10 +275,10 @@ fn handle_import(item: proc_macro::TokenStream) -> syn::Result<proc_macro::Token
                 output_tokens.extend(s);
             }
             Top::Model(model) => {
-                let name = model.name();
+                let name = model.name().to_string();
                 if import_options.include.is_some() {
                     let include = import_options.include.as_ref().expect("UNREACHABLE");
-                    if !include.contains(&name.to_string()) {
+                    if !include.contains(&name) {
                         continue;
                     }
                 }
@@ -319,16 +302,7 @@ fn handle_import(item: proc_macro::TokenStream) -> syn::Result<proc_macro::Token
                         .collect()
                 }));
 
-                let name = match rename {
-                    Some(name) => name,
-                    None => to_pascal_case(name),
-                };
-                let name = if let Some(prefix) = &import_options.prefix {
-                    format!("{}{}", prefix, name)
-                } else {
-                    name.to_string()
-                };
-                let struct_name = format_ident!("{}", name);
+                let struct_name = get_struct_name(rename.unwrap_or(name), &import_options);
                 let documentation = extract_docs(model.documentation().clone());
                 let fields = model
                     .iter_fields()

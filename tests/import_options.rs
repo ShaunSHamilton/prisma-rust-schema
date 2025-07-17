@@ -19,7 +19,7 @@ fn user_model() {
             "lastLogin": 1234567890,
         },
         "my_int": 123_456,
-        "my_float": 0.123456
+        "my_float": 0.123456,
     });
 
     let user: AUser = serde_json::from_value(user_json).unwrap();

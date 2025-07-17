@@ -17,6 +17,7 @@ model User {
   my_int     Int
   my_float   Float
   defaulted  String
+  type       String
 
   posts Post[]
 }

@@ -1,6 +1,6 @@
 use crate::ImportOptions;
 use crate::annotation::FieldAnnotation;
-use crate::transform::{convert_field_to_type, to_snake_case};
+use crate::transform::{convert_field_to_type, get_field_name};
 use psl::schema_ast::ast::Top;
 use psl::schema_ast::ast::{Field, WithDocumentation, WithName};
 use quote::{ToTokens, format_ident, quote};
@@ -30,11 +30,7 @@ pub fn handle_fields(
         return None;
     }
 
-    let name = match &rename {
-        Some(name) => name,
-        None => &to_snake_case(field.name()),
-    };
-    let name = format_ident!("{}", name);
+    let name = get_field_name(rename.unwrap_or(field.name().to_string()));
 
     let serde_rename = if let Some(db_name) = &field.attributes.iter().find_map(|a| {
         if a.name() == "map" {
@@ -52,12 +48,6 @@ pub fn handle_fields(
         };
         Some(s)
         // If field is renamed in Rust, the actual name should be used
-    } else if let Some(_changed_name) = &rename {
-        let original_name = field.name();
-        let s = quote! {
-            #[serde(rename = #original_name)]
-        };
-        Some(s)
     } else if name != &field.name() {
         let original_name = field.name();
         let s = quote! {
