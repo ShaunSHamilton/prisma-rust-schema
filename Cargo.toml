@@ -1,6 +1,6 @@
 [package]
 name = "prisma-rust-schema"
-version = "1.0.1"
+version = "1.0.2"
 edition = "2024"
 authors = ["Shaun Hamilton <shauhami020@gmail.com>"]
 description = "A Rust proc-macro to generate Rust types from Prisma schema files."
@@ -14,16 +14,16 @@ keywords = ["prisma", "rust"]
 proc-macro = true
 
 [dependencies]
-proc-macro2 = "1.0.95"
-quote = "1.0.40"
-serde = { version = "1.0.219", features = ["derive"] }
-serde_json = "1.0.140"
-syn = { version = "2.0.101", features = ["parsing"] }
+proc-macro2 = "1"
+quote = "1"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+syn = { version = "2", features = ["parsing"] }
 psl = { git = "https://github.com/prisma/prisma-engines", version = "0.1.0", tag = "6.11.1", features = [
   "all",
 ] }
 serde_tokenstream = "0.2.2"
-reqwest = { version = "0.12.22", features = ["blocking"] }
+reqwest = { version = "0.12", features = ["blocking"] }
 
 [dev-dependencies]
 bson = "2.15.0"

@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.0.2] - 2025-07-17
+
+### Fixed
+
+- Adjust version requirements for dependencies
+
 ## [1.0.1] - 2025-07-17
 
 ### Fixed
