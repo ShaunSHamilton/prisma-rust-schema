@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.0.3] - 2025-07-21
+
+### Fixed
+
+- Stop trying to derive default for enums
+
 ## [1.0.2] - 2025-07-17
 
 ### Fixed

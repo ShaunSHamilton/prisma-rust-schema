@@ -10,5 +10,10 @@ model Test {
 }
 
 type Dep {
-  d String
+  e DepE
+}
+
+enum DepE {
+  A
+  B
 }

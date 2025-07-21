@@ -221,7 +221,14 @@ fn handle_import(item: proc_macro::TokenStream) -> syn::Result<proc_macro::Token
 
                 let derive = derive.or(import_options.derive.as_ref().map(|d| {
                     d.into_iter()
-                        .map(|i| i.to_token_stream().to_string())
+                        .filter_map(|i| {
+                            // Note: Currently, Default cannot be implemented for enum
+                            let d = i.to_token_stream().to_string();
+                            if d == "Default" {
+                                return None;
+                            }
+                            Some(d)
+                        })
                         .collect()
                 }));
 
