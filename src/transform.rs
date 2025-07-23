@@ -229,8 +229,22 @@ pub(crate) fn convert_field_to_type(field: &Field, import_options: &ImportOption
         "Float" => "f64".to_string(),
         "String" => "String".to_string(),
         "Json" => "serde_json::Value".to_string(),
-        "DateTime" => "chrono::DateTime<chrono::Utc>".to_string(),
-        "bson::oid::ObjectId" => "bson::oid::ObjectId".to_string(),
+        "DateTime" => {
+            if cfg!(feature = "chrono") {
+                "chrono::DateTime<chrono::Utc>".to_string()
+            } else if cfg!(feature = "bson") {
+                "bson::DateTime".to_string()
+            } else {
+                "String".to_string()
+            }
+        }
+        "bson::oid::ObjectId" => {
+            if cfg!(feature = "bson") {
+                "bson::oid::ObjectId".to_string()
+            } else {
+                "String".to_string()
+            }
+        }
         _ => {
             let field_type_name = if let Some(prefix) = &import_options.prefix {
                 format!("{}{}", prefix, field_type_name)

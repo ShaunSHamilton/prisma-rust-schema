@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.1.0] - 2025-07-23
+
+### Added
+
+**Features**
+
+- `bson`
+  - Default
+  - `@db.ObjectId` -> `bson::oid::ObjectId` otherwise `String`
+  - `DateTime` -> `bson::DateTime`
+- `chrono`
+  - `DateTime` -> `chrono::DateTime<chrono::Utc>`
+
 ## [1.0.3] - 2025-07-21
 
 ### Fixed

@@ -140,6 +140,7 @@ dependencies = [
  "ahash",
  "base64",
  "bitvec",
+ "chrono",
  "getrandom 0.2.15",
  "getrandom 0.3.2",
  "hex",
@@ -1108,7 +1109,7 @@ dependencies = [
 
 [[package]]
 name = "prisma-rust-schema"
-version = "1.0.3"
+version = "1.1.0"
 dependencies = [
  "bson",
  "chrono",

@@ -1,6 +1,5 @@
 mod schema;
 use bson::oid::ObjectId;
-use chrono::DateTime;
 use schema::*;
 use serde_json::json;
 
@@ -13,7 +12,7 @@ fn user_model() {
         "email": "test@test.com",
         "name": "John Doe",
         "permission": "USER",
-        "createdAt": DateTime::from_timestamp_millis(1234567890),
+        "createdAt": bson::DateTime::from_millis(1234567890),
         "status": {
             "active": true,
             "lastLogin": 1234567890,
@@ -34,10 +33,7 @@ fn user_model() {
         "name is renamed to username"
     );
     assert_eq!(user.permission, APermission::USER);
-    assert_eq!(
-        user.created_at,
-        DateTime::from_timestamp_millis(1234567890).unwrap()
-    );
+    assert_eq!(user.created_at, bson::DateTime::from_millis(1234567890));
     assert_eq!(
         user.status,
         json!({"active": true, "lastLogin": 1234567890})

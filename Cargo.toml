@@ -1,6 +1,6 @@
 [package]
 name = "prisma-rust-schema"
-version = "1.0.3"
+version = "1.1.0"
 edition = "2024"
 authors = ["Shaun Hamilton <shauhami020@gmail.com>"]
 description = "A Rust proc-macro to generate Rust types from Prisma schema files."
@@ -26,5 +26,10 @@ serde_tokenstream = "0.2.2"
 reqwest = { version = "0.12", features = ["blocking"] }
 
 [dev-dependencies]
-bson = "2.15.0"
+bson = { version = "2.15.0", features = ["chrono-0_4"] }
 chrono = "0.4.37"
+
+[features]
+default = ["bson"]
+bson = []
+chrono = []
