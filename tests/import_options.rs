@@ -38,7 +38,7 @@ fn user_model() {
         user.status,
         json!({"active": true, "lastLogin": 1234567890})
     );
-    assert_eq!(user.my_int, 123_456i64);
+    assert_eq!(user.my_int, 123_456i32);
     assert_eq!(user.my_float, 0.123456f64);
 }
 
