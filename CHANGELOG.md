@@ -1,5 +1,21 @@
 # Changelog
 
+## [2.0.0] - 2025-09-25
+
+### Changed
+
+- `schema_path` -> `schema_paths` to accept multiple schema paths
+
+```rust
+import_types!(
+  schema_paths = ["./prisma/schema1.prisma", "./prisma/schema2.prisma"],
+)
+```
+
+### Fixed
+
+- Yield better error when import options are not parsed
+
 ## [1.1.1] - 2025-09-23
 
 ### Fixed

@@ -2,7 +2,7 @@ use prisma_rust_schema::import_types;
 use serde::{Deserialize, Serialize};
 
 import_types!(
-schema_path = "./prisma/test.prisma",
+schema_paths = ["./prisma/test.prisma"],
 prefix = "A",
 derive = [Deserialize, Serialize, Debug, PartialEq, Default],
 patch = [

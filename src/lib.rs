@@ -29,7 +29,7 @@ pub fn import_types(item: proc_macro::TokenStream) -> proc_macro::TokenStream {
 
 #[derive(Deserialize, Debug)]
 struct ImportOptions {
-    schema_path: String,
+    schema_paths: Vec<String>,
     derive: Option<Vec<ParseWrapper<syn::Path>>>,
     include: Option<Vec<String>>,
     prefix: Option<String>,
@@ -38,20 +38,34 @@ struct ImportOptions {
 
 fn handle_import(item: proc_macro::TokenStream) -> syn::Result<proc_macro::TokenStream> {
     // Parse the input as a string literal `import_types("path.prisma")` or `import_types({ derive: [Path], include: [String]`
-    let import_options: ImportOptions =
-        from_tokenstream(&proc_macro2::TokenStream::from(item.clone())).unwrap_or_else(|_e| {
-            let schema_path = syn::parse::<LitStr>(item)
-                .expect("schema path to be provided")
-                .value();
+    let import_options: ImportOptions = match from_tokenstream(&proc_macro2::TokenStream::from(
+        item.clone(),
+    )) {
+        Ok(opts) => opts,
+        Err(import_opt_error) => {
+            let lit_str = match syn::parse::<LitStr>(item.clone()) {
+                Ok(lit_str) => lit_str,
+                Err(e) => {
+                    return Err(syn::Error::new_spanned(
+                        proc_macro2::TokenStream::from(item),
+                        format!(
+                            "Expected a string literal or an object with named fields: {:?}\n{:?}",
+                            import_opt_error, e
+                        ),
+                    ));
+                }
+            };
+            let schema_path = lit_str.value();
             ImportOptions {
-                schema_path,
+                schema_paths: vec![schema_path],
                 // TODO: Consider defaulting to SERDE
                 derive: None,
                 include: None,
                 prefix: None,
                 patch: None,
             }
-        });
+        }
+    };
 
     let dir = std::env::var("CARGO_MANIFEST_DIR").map_or_else(
         |_| std::env::current_dir().expect("current dir to be determined"),
@@ -60,46 +74,54 @@ fn handle_import(item: proc_macro::TokenStream) -> syn::Result<proc_macro::Token
 
     // println!("{:#?}", import_options.patch);
 
-    let schema_path = import_options.schema_path.clone();
+    // Collect all schemas from the provided paths
+    let mut all_schemas = String::new();
+    for schema_path in &import_options.schema_paths {
+        let schema = match reqwest::blocking::get(schema_path) {
+            Ok(req) => req.text().map_err(|e| {
+                syn::Error::new_spanned(
+                    schema_path,
+                    format!(
+                        "Unable to extract text from provided url: {}",
+                        e.to_string()
+                    ),
+                )
+            })?,
+            Err(_e) => {
+                let path = dir.join(schema_path);
+                if !path.exists() {
+                    return Err(syn::Error::new_spanned(
+                        schema_path,
+                        format!("Schema file not found: {}", path.display()),
+                    ));
+                }
 
-    let schema = match reqwest::blocking::get(&schema_path) {
-        Ok(req) => req.text().map_err(|e| {
-            syn::Error::new_spanned(
-                &schema_path,
-                format!(
-                    "Unable to extract text from provided url: {}",
-                    e.to_string()
-                ),
-            )
-        })?,
-        Err(_e) => {
-            let path = dir.join(&schema_path);
-            if !path.exists() {
-                return Err(syn::Error::new_spanned(
-                    &schema_path,
-                    format!("Schema file not found: {}", path.display()),
-                ));
+                let schema = std::fs::read_to_string(&path)
+                    .map_err(|e| syn::Error::new_spanned(schema_path, e.to_string()))?;
+                schema
             }
+        };
+        all_schemas.push_str(&schema);
+        all_schemas.push('\n');
+    }
 
-            let schema = std::fs::read_to_string(&path)
-                .map_err(|e| syn::Error::new_spanned(&schema_path, e.to_string()))?;
-            schema
-        }
-    };
-
-    let validated_schema =
-        parse_schema(&schema).map_err(|e| syn::Error::new_spanned(&schema_path, e.to_string()))?;
+    let validated_schema = parse_schema(&all_schemas)
+        .map_err(|e| syn::Error::new_spanned(&all_schemas, e.to_string()))?;
 
     let db = validated_schema.db;
 
-    assert_eq!(
-        db.files_count(),
-        1,
-        "This macro only supports single-file schemas"
-    );
+    // Remove single-file assertion, now supports multiple files
+    // assert_eq!(
+    //     db.files_count(),
+    //     1,
+    //     "This macro only supports single-file schemas"
+    // );
 
-    let ast = db.into_iter_asts().next().expect("Expected a single AST");
-    let tops = ast.tops;
+    // Combine all AST tops from all schemas
+    let tops: Vec<_> = db
+        .into_iter_asts()
+        .flat_map(|ast| ast.tops.clone())
+        .collect();
 
     // let mut output_token_stream = TokenStream::new();
     let mut output_tokens = quote! {};
