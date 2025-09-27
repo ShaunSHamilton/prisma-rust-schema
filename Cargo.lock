@@ -1111,7 +1111,7 @@ dependencies = [
 
 [[package]]
 name = "prisma-rust-schema"
-version = "2.0.0"
+version = "2.1.0"
 dependencies = [
  "bson",
  "chrono",

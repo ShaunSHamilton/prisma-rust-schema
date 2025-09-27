@@ -1,5 +1,17 @@
 # Changelog
 
+## [2.1.0] - 2025-09-25
+
+### Fixed
+
+- When `mongodb` feature is enabled, `Int` fields convert to `i64` instead of `i32`
+
+### Added
+
+- Support for Prisma `BigInt` -> `i64`
+- `mongodb` feature
+- Recognize `@db.Int` and `@db.Long` attributes to convert `Int` fields to `i32` and `i64`
+
 ## [2.0.0] - 2025-09-25
 
 ### Changed

@@ -1,6 +1,6 @@
 [package]
 name = "prisma-rust-schema"
-version = "2.0.0"
+version = "2.1.0"
 edition = "2024"
 authors = ["Shaun Hamilton <shauhami020@gmail.com>"]
 description = "A Rust proc-macro to generate Rust types from Prisma schema files."
@@ -33,3 +33,4 @@ chrono = "0.4"
 default = ["bson"]
 bson = []
 chrono = []
+mongodb = []

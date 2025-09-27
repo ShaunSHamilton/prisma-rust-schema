@@ -223,9 +223,25 @@ pub(crate) fn convert_field_to_type(field: &Field, import_options: &ImportOption
         field_type_name = "bson::oid::ObjectId".to_string();
     }
 
+    // If attribute contains `@db.Int`, convert field_type_name to `i32`
+    if field.attributes.iter().any(|attr| attr.name() == "db.Int") {
+        field_type_name = "Int32".to_string();
+    }
+    // If attribute contains `@db.Long`, convert field_type_name to `i64`
+    if field.attributes.iter().any(|attr| attr.name() == "db.Long") {
+        field_type_name = "Int64".to_string();
+    }
+
     let scalar = match field_type_name.as_str() {
         "Boolean" => "bool".to_string(),
-        "Int" => "i32".to_string(),
+        "Int" => {
+            // MongoDB connector is only db connector that defaults to i64
+            if cfg!(feature = "mongodb") {
+                "i64".to_string()
+            } else {
+                "i32".to_string()
+            }
+        }
         "Float" => "f64".to_string(),
         "String" => "String".to_string(),
         "Json" => "serde_json::Value".to_string(),
@@ -245,6 +261,8 @@ pub(crate) fn convert_field_to_type(field: &Field, import_options: &ImportOption
                 "String".to_string()
             }
         }
+        "Int32" => "i32".to_string(),
+        "Int64" | "BigInt" => "i64".to_string(),
         _ => {
             let field_type_name = if let Some(prefix) = &import_options.prefix {
                 format!("{}{}", prefix, field_type_name)
