@@ -254,7 +254,7 @@ dependencies = [
 [[package]]
 name = "diagnostics"
 version = "0.1.0"
-source = "git+https://github.com/prisma/prisma-engines?tag=6.16.2#1c57fdcd7e44b29b9313256c76699e91c3ac3c43"
+source = "git+https://github.com/prisma/prisma-engines?tag=6.16.3#bb420e667c1820a8c05a38023385f6cc7ef8e83a"
 dependencies = [
  "colored",
  "indoc",
@@ -1006,7 +1006,7 @@ dependencies = [
 [[package]]
 name = "parser-database"
 version = "0.1.0"
-source = "git+https://github.com/prisma/prisma-engines?tag=6.16.2#1c57fdcd7e44b29b9313256c76699e91c3ac3c43"
+source = "git+https://github.com/prisma/prisma-engines?tag=6.16.3#bb420e667c1820a8c05a38023385f6cc7ef8e83a"
 dependencies = [
  "diagnostics",
  "either",
@@ -1127,7 +1127,7 @@ dependencies = [
 [[package]]
 name = "prisma-value"
 version = "0.1.0"
-source = "git+https://github.com/prisma/prisma-engines?tag=6.16.2#1c57fdcd7e44b29b9313256c76699e91c3ac3c43"
+source = "git+https://github.com/prisma/prisma-engines?tag=6.16.3#bb420e667c1820a8c05a38023385f6cc7ef8e83a"
 dependencies = [
  "base64",
  "bigdecimal",
@@ -1150,7 +1150,7 @@ dependencies = [
 [[package]]
 name = "psl"
 version = "0.1.0"
-source = "git+https://github.com/prisma/prisma-engines?tag=6.16.2#1c57fdcd7e44b29b9313256c76699e91c3ac3c43"
+source = "git+https://github.com/prisma/prisma-engines?tag=6.16.3#bb420e667c1820a8c05a38023385f6cc7ef8e83a"
 dependencies = [
  "psl-core",
 ]
@@ -1158,7 +1158,7 @@ dependencies = [
 [[package]]
 name = "psl-core"
 version = "0.1.0"
-source = "git+https://github.com/prisma/prisma-engines?tag=6.16.2#1c57fdcd7e44b29b9313256c76699e91c3ac3c43"
+source = "git+https://github.com/prisma/prisma-engines?tag=6.16.3#bb420e667c1820a8c05a38023385f6cc7ef8e83a"
 dependencies = [
  "bigdecimal",
  "cfg-if",
@@ -1397,7 +1397,7 @@ dependencies = [
 [[package]]
 name = "schema-ast"
 version = "0.1.0"
-source = "git+https://github.com/prisma/prisma-engines?tag=6.16.2#1c57fdcd7e44b29b9313256c76699e91c3ac3c43"
+source = "git+https://github.com/prisma/prisma-engines?tag=6.16.3#bb420e667c1820a8c05a38023385f6cc7ef8e83a"
 dependencies = [
  "diagnostics",
  "pest",
